@@ -1,2 +1,17 @@
 # DH3014
-ETTh1, ETTh2, ETTm1, ETTm2, electricity, traffic, exchange_rate, weather
+.
+├── ETT-small
+│   ├── ETTh1.csv
+│   ├── ETTh2.csv
+│   ├── ETTm1.csv
+│   └── ETTm2.csv
+├── electricity
+│   └── electricity.csv
+├── exchange_rate
+│   └── exchange_rate.csv
+├── illness
+│   └── national_illness.csv (deprecated)
+├── traffic
+│   └── traffic.csv
+└── weather
+    └── weather.csv
