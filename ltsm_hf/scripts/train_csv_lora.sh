@@ -20,7 +20,7 @@ TEST="/home/sl237/all_six_datasets/ETT-small/ETTh1.csv
     /home/sl237/all_six_datasets/weather/weather.csv"
 
 PROMPT="/home/gw22/python_project/ltsm_proj/ltsm/prompt/prompt_data_normalize_csv_split"
-
+MODEL_NAME="gpt2-medium"
 
 for pred_len in 96 192 336 720
 do
@@ -35,6 +35,7 @@ for lr in 1e-3
             CUDA_VISIBLE_DEVICES=1,2,3,4,5,6,7 python3 main_hf.py \
                 --lora \
                 --lora_dim ${lora_dim} \
+                --model_name_or_path ${MODEL_NAME} \
                 --model_id test_run \
                 --train_epochs ${epoch} \
                 --batch_size 800 \
