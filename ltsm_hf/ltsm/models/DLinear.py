@@ -3,6 +3,8 @@ import torch.nn as nn
 import torch.nn.functional as F
 import numpy as np
 
+from transformers.modeling_utils import PreTrainedModel
+
 class moving_avg(nn.Module):
     """
     Moving average block to highlight the trend of time series
@@ -35,11 +37,11 @@ class series_decomp(nn.Module):
         res = x - moving_mean
         return res, moving_mean
 
-class DLinear(nn.Module):
+class DLinear(PreTrainedModel):
     """
     Decomposition-Linear
     """
-    def __init__(self, configs, device):
+    def __init__(self, configs, device=torch.device("cpu")):
         super(DLinear, self).__init__()
         self.seq_len = configs.seq_len
         self.pred_len = configs.pred_len

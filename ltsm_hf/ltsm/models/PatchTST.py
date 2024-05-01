@@ -7,6 +7,7 @@ from math import sqrt, log
 import matplotlib.pyplot as plt
 
 from embed import DataEmbedding_wo_time
+from transformers.modeling_utils import PreTrainedModel
 
 import random
 
@@ -138,11 +139,11 @@ class Encoder(nn.Module):
 
         return x, attns
 
-class PatchTST(nn.Module):
+class PatchTST(PreTrainedModel):
     """
     Vanilla Transformer with O(L^2) complexity
     """
-    def __init__(self, configs, device):
+    def __init__(self, configs, device=torch.device("cpu")):
         super(PatchTST, self).__init__()
 
         self.enc_in = configs.enc_in

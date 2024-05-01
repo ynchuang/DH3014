@@ -22,6 +22,7 @@ def get_args():
     parser = argparse.ArgumentParser(description='LTSM')
 
     parser.add_argument('--model_id', type=str, required=True, default='test_run')
+    parser.add_argument('--model_name_or_path', type=str, default="gpt2-medium") # google/gemma-2b, meta-llama/Llama-2-7b-hf
     parser.add_argument('--seed', type=int, default=0)
     parser.add_argument('--device', type=str, default="cuda:0")
     parser.add_argument('--checkpoints', type=str, default='./checkpoints/')
@@ -66,7 +67,7 @@ def get_args():
     parser.add_argument('--n_heads', type=int, default=16)
     parser.add_argument('--d_ff', type=int, default=512)
     parser.add_argument('--dropout', type=float, default=0.2)
-    parser.add_argument('--enc_in', type=int, default=862)
+    parser.add_argument('--enc_in', type=int, default=1)
     parser.add_argument('--c_out', type=int, default=862)
     parser.add_argument('--patch_size', type=int, default=16)
     parser.add_argument('--kernel_size', type=int, default=25)
@@ -87,6 +88,8 @@ def get_args():
     parser.add_argument('--lora', action="store_true")
     parser.add_argument('--lora_dim', type=int, default=128)
     parser.add_argument('--downsample_rate', type=int, default=100)
+    parser.add_argument('--llm_layers', type=int, default=32)
+
     # args = parser.parse_args()
     args, unknown = parser.parse_known_args()
 
@@ -172,8 +175,8 @@ def run(args):
     @torch.no_grad()
     def prediction_step(model, inputs, prediction_loss_only=False, ignore_keys=None):
         # CSV
-        input_data = inputs["input_data"].to(model.module.device)
-        labels = inputs["labels"].to(model.module.device)
+        input_data = inputs["input_data"].to(model.device)
+        labels = inputs["labels"].to(model.device)
         
         # monash
         # input_data = inputs["input_data"].to(model.device)
@@ -204,7 +207,7 @@ def run(args):
     # Training settings
     train_dataset, eval_dataset, test_dataset, _ = get_datasets(args)
     train_dataset, eval_dataset, test_dataset = HF_Dataset(train_dataset), HF_Dataset(eval_dataset), HF_Dataset(test_dataset)
-    
+
     # from transformers import AutoTokenizer, PatchTSTForPrediction
     # model = PatchTSTForPrediction.from_pretrained("namctin/patchtst_etth1_forecast")
     trainer = Trainer(

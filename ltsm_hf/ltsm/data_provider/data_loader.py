@@ -12,8 +12,6 @@ from torch.utils.data.dataset import ConcatDataset, Dataset
 from ltsm.utils.timefeatures import time_features
 from ltsm.utils.tools import convert_tsf_to_dataframe
 
-
-
 warnings.filterwarnings('ignore')
 
 class Dataset_ETT_hour(Dataset):
@@ -664,6 +662,7 @@ class Dataset_Custom_List_TS(Dataset):
         self.data_all = []
         self.len_index = [0]
         self.tot_len = 0
+
         for path in self.data_path:
             if path.endswith('.csv'):
                 df_raw = pd.read_csv(path)
@@ -720,8 +719,6 @@ class Dataset_Custom_List_TS(Dataset):
 
     def inverse_transform(self, data):
         return self.scaler.inverse_transform(data)
-    
-
 
 class Dataset_Custom_List_TS_TSF(Dataset):
     def __init__(
@@ -744,7 +741,7 @@ class Dataset_Custom_List_TS_TSF(Dataset):
             self.seq_len = 24 * 4 * 4
             self.pred_len = 24 * 4
         else:
-            self.seq_len, self.pred_len = size
+            self.seq_len, _, self.pred_len = size
         # init
         assert split in ['train', 'test', 'val']
         type_map = {'train': 0, 'val': 1, 'test': 2}
@@ -760,7 +757,7 @@ class Dataset_Custom_List_TS_TSF(Dataset):
         self.__read_data__()
         
         self.tot_len = self.len_index[-1]
-
+        
     def __read_data__(self):
         self.scaler = StandardScaler()
         def dropna(x):
@@ -768,6 +765,7 @@ class Dataset_Custom_List_TS_TSF(Dataset):
         self.data_all = []
         self.len_index = [0]
         self.tot_len = 0
+
         for path in self.data_path:
             df, frequency, forecast_horizon, contain_missing_values, contain_equal_length = convert_tsf_to_dataframe(path)
             self.freq = frequency
@@ -789,10 +787,10 @@ class Dataset_Custom_List_TS_TSF(Dataset):
 
                 if self.scale:
                     train_data = df_raw[border1s[0]:border2s[0]]
-                    self.scaler.fit(train_data.values)
-                    data = self.scaler.transform(df_raw.values)
+                    self.scaler.fit(train_data)
+                    data = self.scaler.transform(df_raw)
                 else:
-                    data = df_raw.values
+                    data = df_raw
 
                 self.data_all.append(data[border1:border2])
                 self.len_index.append(self.len_index[-1] + border2 - border1 - self.seq_len - self.pred_len + 1)
