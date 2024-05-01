@@ -1,4 +1,8 @@
 # DH3014
+## With any hf_model weight import
+- Package Version Requirement
+  - transformer 4.40
+  - torch 2.0.1
 - ETT-small
   - ETT-h1.csv
   - ETT-h2.csv
